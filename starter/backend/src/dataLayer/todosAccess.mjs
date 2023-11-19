@@ -6,6 +6,7 @@ import { createLogger } from '../utils/logger.mjs';
 const documentClient = AWSXRay.captureAWSv3Client(new DynamoDB());
 const docClient = DynamoDBDocument.from(documentClient);
 
+
 const logger = createLogger('TodosAccess');
 const todosTable = process.env.TODOS_TABLE;
 
@@ -20,7 +21,7 @@ export async function getTodoAccess(userId) {
         }
     };
 
-    const newTodo = await docClient.query(params).promise();
+    const newTodo = await docClient.query(params);
 
     return newTodo.Items;
 }
@@ -33,7 +34,7 @@ export async function createTodoAccess(todo) {
         Item: todo
     };
 
-    return await docClient.put(params).promise();
+    return await docClient.put(params);
 }
 
 export async function updateTodoAccess(todoId, userId, todoUpdate) {
@@ -55,7 +56,7 @@ export async function updateTodoAccess(todoId, userId, todoUpdate) {
         ReturnValues: "ALL_NEW"
     };
 
-    return await docClient.update(params).promise();
+    return await docClient.update(params);
 }
 
 export async function deleteTodoAccess(todoId, userId) {
@@ -69,11 +70,11 @@ export async function deleteTodoAccess(todoId, userId) {
         },
     };
 
-    return await docClient.delete(params).promise();
+    return await docClient.delete(params);
 }
 
 export async function updateAttachmentAccess(todoId, userId, attachmentUrl) {
-    logger.info(`updateAttachmentAccess start with todoId ${todoId}, userId ${userId}`);
+    logger.info(`updateAttachmentAccess start with todoId ${todoId}, userId ${userId}, attachmentUrl ${attachmentUrl}`);
 
     const params = {
         TableName: todosTable,
@@ -88,6 +89,6 @@ export async function updateAttachmentAccess(todoId, userId, attachmentUrl) {
         ReturnValues: "ALL_NEW"
     };
 
-    return await docClient.update(params).promise();
+    return await docClient.update(params);
 }
 

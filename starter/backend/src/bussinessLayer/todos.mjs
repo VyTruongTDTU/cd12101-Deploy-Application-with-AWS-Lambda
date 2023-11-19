@@ -9,6 +9,9 @@ import {
 } from '../dataLayer/todosAccess.mjs';
 import { getSignedUrl } from '../helpers/attachmentUtils.mjs';
 
+import { createLogger } from '../utils/logger.mjs';
+const logger = createLogger('todos');
+
 const bucketName = process.env.ATTACHMENT_S3_BUCKET;
 
 export async function getTodo(userId) {
@@ -47,8 +50,9 @@ export async function deleteTodo(todoId, userId) {
 export async function generateUploadUrl(todoId, userId) {
   const url = `https://${bucketName}.s3.amazonaws.com/${todoId}`;
   const attachmentUrl = getSignedUrl(todoId);
-
+  logger.info(`updateAttachmentAccess ${attachmentUrl}`);
   await updateAttachmentAccess(todoId, userId, url);
+  logger.info(`updateAttachmentAccess success`);
 
   return attachmentUrl;
 }
