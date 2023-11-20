@@ -5,7 +5,14 @@ import httpErrorHandler from '@middy/http-error-handler'
 import { getUserId } from '../utils.mjs';
 import { createTodo } from '../../bussinessLayer/todos.mjs';
 
-const handler = middy(async (event) => {
+
+export const handler = middy()
+    .use(httpErrorHandler())
+    .use(
+        cors({
+            credentials: true
+        })
+    ).handler(async (event) => {
     const newTodo = JSON.parse(event.body);
     const userId = getUserId(event);
     const newItem = await createTodo(userId, newTodo);
@@ -17,15 +24,3 @@ const handler = middy(async (event) => {
         }),
     };
 });
-
-handler
-    .use(httpErrorHandler())
-    .use(
-        cors({
-            credentials: true
-        })
-    );
-
-module.exports = {
-    handler
-};

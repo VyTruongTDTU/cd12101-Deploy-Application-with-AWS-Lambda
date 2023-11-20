@@ -4,15 +4,9 @@ service: serverless-todo-app
 
 plugins:
   - serverless-iam-roles-per-function
-  - serverless-plugin-tracing
   - serverless-reqvalidator-plugin
-  - serverless-webpack
 
-
-custom:
-  webpack:
-    webpackConfig: ./webpack.config.js
-
+frameworkVersion: '3.37.0'
 
 provider:
   name: aws
@@ -25,6 +19,9 @@ provider:
   tracing:
     lambda: true
     apiGateway: true
+  
+  httpApi:
+    cors: true
 
   # Use these variables in the functions and resources section below. For example, 
   # ${self:provider.environment.ATTACHMENT_S3_BUCKET}
@@ -154,12 +151,13 @@ functions:
           path: todos/{todoId}/attachment
           cors: true
           authorizer: Auth
-          
+    iamRoleStatementsInherit: true
     iamRoleStatementsName: serverless-s3-upload-role-${self:provider.stage}
     iamRoleStatements:
       - Effect: Allow
         Action:
-          - dynamodb:UpdateItem
+        - 'dynamodb:UpdateItem'
+        - 'dynamodb:Query'
         Resource: arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.TODOS_TABLE}
       - Effect: Allow
         Action:
@@ -200,6 +198,8 @@ resources:
     # TODO: Create a DynamoDB table with local secondary index and a composite key
     TodosTable:
       Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      UpdateReplacePolicy: Retain
       Properties:
         AttributeDefinitions:
           - AttributeName: userId

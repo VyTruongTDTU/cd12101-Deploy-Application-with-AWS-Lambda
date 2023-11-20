@@ -82,13 +82,15 @@ export async function updateAttachmentAccess(todoId, userId, attachmentUrl) {
             todoId: todoId,
             userId: userId
         },
-        UpdateExpression: "set attachmentUrl = :url",
+        UpdateExpression: "set attachmentUrl = :attachmentUrl",
         ExpressionAttributeValues: {
-            ":url": attachmentUrl
+            ":attachmentUrl": attachmentUrl
         },
-        ReturnValues: "ALL_NEW"
+        ReturnValues: "UPDATED_NEW"
     };
-
-    return await docClient.update(params);
+    logger.info(`before params ${JSON.stringify(params)}`);
+    const result = await docClient.update(params);
+    logger.info(`updateAttachmentAccess result ${JSON.stringify(result)}`);
+    return result;
 }
 

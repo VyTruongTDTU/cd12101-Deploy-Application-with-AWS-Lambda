@@ -1,13 +1,13 @@
 import axios from 'axios'
 
-import { verify, decode } from 'jsonwebtoken';
+import jsonwebtoken from 'jsonwebtoken'
 import { createLogger } from '../../utils/logger.mjs';
 
 const logger = createLogger('auth');
 
 const jwksUrl = 'https://dev-rmyzuwhnq4xr83r7.us.auth0.com/.well-known/jwks.json';
 
-exports.handler = async (event) => {
+export async function handler(event) {
   logger.info('Authorizing a user', event.authorizationToken);
   try {
     const jwtToken = await verifyToken(event.authorizationToken);
@@ -47,11 +47,11 @@ exports.handler = async (event) => {
 
 async function verifyToken(authHeader) {
   const token = getToken(authHeader);
-  const jwt = decode(token, { complete: true });
+  const jwt = jsonwebtoken.decode(token, { complete: true });
 
   const cert = await getSigningKeys(jwt.header.kid);
 
-  return verify(token, cert, { algorithms: ['RS256'] });
+  return jsonwebtoken.verify(token, cert, { algorithms: ['RS256'] });
 }
 
 function getToken(authHeader) {

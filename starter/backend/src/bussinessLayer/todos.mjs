@@ -7,7 +7,7 @@ import {
   deleteTodoAccess,
   updateAttachmentAccess
 } from '../dataLayer/todosAccess.mjs';
-import { getSignedUrl } from '../helpers/attachmentUtils.mjs';
+import { getUploadUrl, getAttachmentUrl } from '../helpers/attachmentUtils.mjs'
 
 import { createLogger } from '../utils/logger.mjs';
 const logger = createLogger('todos');
@@ -48,12 +48,15 @@ export async function deleteTodo(todoId, userId) {
 }
 
 export async function generateUploadUrl(todoId, userId) {
-  const url = `https://${bucketName}.s3.amazonaws.com/${todoId}`;
-  const attachmentUrl = getSignedUrl(todoId);
+  logger.info(`Get uploadUrl for todoId ${todoId} of userId ${userId}`)
+  const fileId = uuid.v4()
+  const uploadUrl = await getUploadUrl(fileId)
+  const attachmentUrl = getAttachmentUrl(fileId);
+
   logger.info(`updateAttachmentAccess ${attachmentUrl}`);
-  await updateAttachmentAccess(todoId, userId, url);
+  await updateAttachmentAccess(todoId, userId, attachmentUrl);
   logger.info(`updateAttachmentAccess success`);
 
-  return attachmentUrl;
+  return uploadUrl;
 }
 

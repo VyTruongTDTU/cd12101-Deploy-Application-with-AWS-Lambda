@@ -32,8 +32,3 @@ export const handler = middy()
         })
     };
   })
-
-
-module.exports = {
-    handler
-};
