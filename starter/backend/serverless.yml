@@ -78,6 +78,9 @@ functions:
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
+          request:
+            schemas:
+              application/json: ${file(schemas/create-todo-request.json)}
 
     iamRoleStatementsName: serverless-create-todo-role-${self:provider.stage}
     iamRoleStatements:
@@ -103,6 +106,9 @@ functions:
           cors: true
           authorizer: Auth
           reqValidatorName: RequestBodyValidator
+          request:
+            schemas:
+              application/json: ${file(schemas/update-todo-request.json)}
 
     iamRoleStatementsName: serverless-update-todo-role-${self:provider.stage}
     iamRoleStatements:
